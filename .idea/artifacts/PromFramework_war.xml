@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="PromFramework:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/PromFramework_war</output-path>
+    <root id="archive" name="PromFramework_war.war">
+      <element id="artifact" artifact-name="PromFramework:war exploded" />
+    </root>
+  </artifact>
+</component>

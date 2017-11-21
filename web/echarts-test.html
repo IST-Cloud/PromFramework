@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf8">
+  <script src="http://cdn.bootcss.com/echarts/3.2.2/echarts.js"></script>
+  <script src="jquery-2.1.0.js"></script>
+  <script type="text/javascript">
+      function draw(){
+          var text = $("#graph-input").val();
+//          var data = eval(text);
+          var data = [];
+          data[0]=new Array();
+          data[0][0]='a';
+          data[0][1]='b';
+          data[0][2]='10';
+          data[1]=new Array();
+          data[1][0]='a';
+          data[1][1]='c';
+          data[1][2]='10';
+          console.log(data);
+          var graph = data2Graph(data);
+          drawGraph(graph);
+      }
+
+      function data2Graph(data) {
+          var graph = {};
+          var vertices = {};
+          var links = [];
+          for (var i = 0; i < data.length; i++) {
+              var s = data[i].source;
+              var t = data[i].target;
+              var v = data[i].value;
+              vertices[s] = s;
+              vertices[t] = t;
+              links.push({'source' : s, 'target' : t, 'value' : v});
+          }
+          var nodes = [];
+          $.each(vertices, function(k, v) {
+              nodes.push({'name' : v, 'value' : v});
+          });
+          graph['links'] = links;
+          graph['data'] = nodes;
+          graph.data.forEach(function (node) {
+              node.draggable = true;
+          });
+          return graph;
+      }
+
+      function drawGraph(graph) {
+          var myChart = echarts.init(document.getElementById("echarts-main"));
+          var option = {
+              tooltip: {},
+              series : [
+                  {
+                      type: 'graph',
+                      layout: 'force',
+                      symbolSize: 30,
+                      edgeSymbol: ['none', 'arrow'],
+                      data: graph.data,
+                      links: graph.links,
+                      roam: true,
+                      label: {
+                          normal: {
+                              show: true,
+                              formatter: function (e) {
+                                  return e['data']['value'];
+                              }
+                          }
+                      },
+                      edgeLabel: {
+                          normal: {
+                              show: true,
+                              position: 'middle'
+                          }
+                      },
+                      force: {
+                          repulsion: 1000,
+                          edgeLength: 200
+                      }
+                  }
+              ]
+          };
+          myChart.setOption(option);
+      }
+
+      $(document).ready(function(){
+          draw();
+          $("#gen-btn").on("click", function(){
+              draw();
+          });
+      });
+  </script>
+</head>
+<body>
+<p>在下方文本框内输入有向图JSON（[source, target, value]）：</p>
+<textarea id="graph-input" style="height:210px;width:500px">
+[[0,1,10], [1,0,1], [1,2,5], [2,0,5]]
+</textarea>
+<p><button id="gen-btn">生成力导向图</button></p>
+<div id="echarts-main" style="height:320px;width:500px;border:1px dashed;"></div>
+</body>
+</html>
